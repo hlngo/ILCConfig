@@ -7,7 +7,7 @@
            style="text-align: center; background-color: #003114; border: none; ">
         <label class="collapse-division-label">
           <a data-toggle="collapse" href="#demo{{k}}" role="button" aria-expanded="false" aria-controls="zoneTemp">
-            {{cluster.device_criteria_file}} {{k}}  <i class="material-icons float-right" style="font-size: 30px;">
+            {{cluster.device_criteria_file}}<i class="material-icons float-right" style="font-size: 30px;">
             keyboard_arrow_down
           </i>
           </a>
@@ -71,12 +71,12 @@
                 <div class="collapse" id="Devices{{k}}">
                   <div class="card card-body">
                     <ul style="list-style-type:none;">
-                      <li *ngFor="let devices of this.deviceAndPoints;let d = index;trackBy: trackByIndex;">
+                      <li *ngFor="let device of this.deviceAndPoints[k];let d = index;trackBy: trackByIndex;">
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="device" [checked]=devices.checked
-                                 (change)="addOrRemove(devices.deviceName, $event, d, k)" id="{{devices.deviceName}}">
-                          <label class="form-check-label" for="{{devices.deviceName}}">
-                            {{devices.deviceName}}{{k}}
+                          <input class="form-check-input" type="checkbox" value="device" [checked]=device.checked
+                                 (change)="addOrRemove(device.deviceName, $event, d, k)" id="{{device.deviceName}}">
+                          <label class="form-check-label" for="{{device.deviceName}}">
+                            {{device.deviceName}}
                           </label>
                         </div>
                       </li>
@@ -105,13 +105,13 @@
             <div class="col-sm">
               <h5>Criteria Configuration</h5>
               <div>
-                <ng-container *ngFor="let device of devices;let index = index;trackBy: trackByIndex;">
+                <ng-container *ngFor="let device of devices[k];let index = index;trackBy: trackByIndex;">
                   <div class="collapse-division " style="width: 100%">
 
                     <label class="collapse-division-label">
                       <a data-toggle="collapse" href="#{{[index]}}{{k}}" role="button"
                          aria-expanded="false" aria-controls="zoneTemp">
-                        {{device.deviceName}}  {{campus}}/{{building}}/{{device.deviceName}} {{index}}{{k}}<i
+                        {{device.deviceName}}  {{campus}}/{{building}}/{{device.deviceName}}<i
                         class="material-icons float-right">
                         keyboard_arrow_down
                       </i>
@@ -130,7 +130,7 @@
                                   <a style="color: black" data-toggle="collapse" href="#{{k}}{{i}}{{index}}"
                                      role="button"
                                      aria-expanded="false" aria-controls="zoneTemp">
-                                    {{criteria}}{{k}} {{i}} {{index}}
+                                    {{criteria}}
                                     <i class="material-icons float-right">
                                       keyboard_arrow_down
                                     </i>
@@ -153,11 +153,11 @@
                                       <div *ngIf="criteriaModelList[k].operationType[index][i] == 'Formula'"
                                            id="childFormula">
                                         <ng-container
-                                          *ngFor="let arg of criteriaModelList[k].formulaModel[index][i].argument;let x = index;trackBy: trackByIndex;">
+                                          *ngFor="let arg of criteriaModelList[k].formulaModel[index][i].getoperation_args;let x = index;trackBy: trackByIndex;">
                                           <mat-form-field style="width: 100%">
                                             <mat-label>Arguments{{x}}</mat-label>
                                             <mat-select
-                                              [(ngModel)]=criteriaModelList[k].formulaModel[index][i].argument[x]>
+                                              [(ngModel)]=criteriaModelList[k].formulaModel[index][i].getoperation_args[x]>
                                               <div *ngFor="let point of device.devicePoints">
                                                 <mat-option value="{{point}}">{{point}}</mat-option>
                                               </div>
@@ -180,73 +180,79 @@
                                         <div>
                                           <mat-form-field class="example-full-width">
                                         <textarea matInput placeholder="operation"
-                                                  [(ngModel)]="criteriaModelList[k].formulaModel[index][i].operation"></textarea>
+                                                  [(ngModel)]="criteriaModelList[k].formulaModel[index][i].setoperation"></textarea>
                                           </mat-form-field>
                                           <mat-form-field class="example-full-width">
-                                            <input matInput placeholder="Minimum(Optional)"
-                                                   [(ngModel)]="criteriaModelList[k].formulaModel[index][i].minimum">
+                                            <input type="number" matInput placeholder="Minimum(Optional)"
+                                                   [(ngModel)]="criteriaModelList[k].formulaModel[index][i].mini">
                                           </mat-form-field>
                                           <mat-form-field class="example-full-width">
-                                            <input matInput placeholder="Maximum(Optional)"
+                                            <input type="number" matInput placeholder="Maximum(Optional)"
                                                    [(ngModel)]="criteriaModelList[k].formulaModel[index][i].maximun">
                                           </mat-form-field>
                                         </div>
                                       </div>
 
                                       <div *ngIf="criteriaModelList[k].operationType[index][i] == 'status'">
+                                        <mat-form-field style="width: 100%">
+                                          <mat-label>Point Name</mat-label>
+                                          <mat-select
+                                            [(ngModel)]=criteriaModelList[k].statusModel[index][i].setpointName>
+                                            <div *ngFor="let point of device.devicePoints">
+                                              <mat-option value="{{point}}">{{point}}</mat-option>
+                                            </div>
+                                          </mat-select>
+                                        </mat-form-field>
+
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Point Value"
-                                                 [(ngModel)]="criteriaModelList[k].statusModel[index][i].pointName">
+                                          <input type="number" matInput placeholder="On Value"
+                                                 [(ngModel)]="criteriaModelList[k].statusModel[index][i].setonValue">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="On Value"
-                                                 [(ngModel)]="criteriaModelList[k].statusModel[index][i].onValue">
-                                        </mat-form-field>
-                                        <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Off Value"
-                                                 [(ngModel)]="criteriaModelList[k].statusModel[index][i].offValue">
+                                          <input type="number" matInput placeholder="Off Value"
+                                                 [(ngModel)]="criteriaModelList[k].statusModel[index][i].setoffValue">
                                         </mat-form-field>
                                       </div>
 
                                       <div *ngIf="criteriaModelList[k].operationType[index][i] == 'mapper'">
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Map Key"
-                                                 [(ngModel)]="criteriaModelList[k].mapperModel[index][i].mapKey">
+                                                 [(ngModel)]="criteriaModelList[k].mapperModel[index][i].setmap_key">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Dist. Name"
-                                                 [(ngModel)]="criteriaModelList[k].mapperModel[index][i].distName">
+                                                 [(ngModel)]="criteriaModelList[k].mapperModel[index][i].setdist_name">
                                         </mat-form-field>
                                       </div>
 
                                       <div *ngIf="criteriaModelList[k].operationType[index][i] == 'constant'">
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Value"
-                                                 [(ngModel)]="criteriaModelList[k].constantModel[index][i].value">
+                                          <input type="number" matInput placeholder="Value"
+                                                 [(ngModel)]="criteriaModelList[k].constantModel[index][i].setvalue">
                                         </mat-form-field>
                                       </div>
 
                                       <div *ngIf="criteriaModelList[k].operationType[index][i] == 'history'">
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Comparision Type"
-                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].comparisonType">
+                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].setcomparisonType">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Point Name"
-                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].historyPointName">
+                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].sethistoryPointName">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Previous Time"
-                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].previousTime">
+                                          <input type="number" matInput placeholder="Previous Time"
+                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].setpreviousTime">
                                         </mat-form-field>
 
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Maximum"
-                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].historyMaximum">
+                                          <input type="number" matInput placeholder="Maximum"
+                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].sethistoryMaximum">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Maximum"
-                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].historyMinimum">
+                                          <input type="number" matInput placeholder="Maximum"
+                                                 [(ngModel)]="criteriaModelList[k].historyModel[index][i].sethistoryMinimum">
                                         </mat-form-field>
                                       </div>
                                     </div>
@@ -258,7 +264,8 @@
                         </div>
                         <hr>
                         <p *ngIf="criteriaModelList[k].showAugmentSection[index]" class="h5">Augment</p>
-                        <div style="padding: 1%" class="border border-light rounded" *ngIf='criteriaModelList[k].showAugmentSection[index]'>
+                        <div style="padding: 1%" class="border border-light rounded"
+                             *ngIf='criteriaModelList[k].showAugmentSection[index]'>
                           <ng-container *ngFor="let criteria of criteriaList[k];let j = index;trackBy: trackByIndex;">
                             <div>
                               <div class="collapse-division" style="background-color: white">
@@ -289,11 +296,11 @@
                                       <div *ngIf="criteriaModelList[k].operationType[index][j] == 'Formula'"
                                            id="childFormulaAugment">
                                         <ng-container
-                                          *ngFor="let arg of criteriaModelList[k].augmentFormulaModel[index][j].argument;let x = index;trackBy: trackByIndex;">
+                                          *ngFor="let arg of criteriaModelList[k].augmentFormulaModel[index][j].getoperation_args;let x = index;trackBy: trackByIndex;">
                                           <mat-form-field style="width: 100%">
                                             <mat-label>Arguments{{x}}</mat-label>
                                             <mat-select
-                                              [(ngModel)]=criteriaModelList[k].augmentFormulaModel[index][j].argument[x]>
+                                              [(ngModel)]=criteriaModelList[k].augmentFormulaModel[index][j].getoperation_args[x]>
                                               <div *ngFor="let point of device.devicePoints">
                                                 <mat-option value="{{point}}">{{point}}</mat-option>
                                               </div>
@@ -316,14 +323,14 @@
                                         <div>
                                           <mat-form-field class="example-full-width">
                                         <textarea matInput placeholder="operation"
-                                                  [(ngModel)]="criteriaModelList[k].augmentFormulaModel[index][j].operation"></textarea>
+                                                  [(ngModel)]="criteriaModelList[k].augmentFormulaModel[index][j].setoperation_args"></textarea>
                                           </mat-form-field>
                                           <mat-form-field class="example-full-width">
-                                            <input matInput placeholder="Minimum(Optional)"
-                                                   [(ngModel)]="criteriaModelList[k].augmentFormulaModel[index][j].minimum">
+                                            <input type="number" matInput placeholder="Minimum(Optional)"
+                                                   [(ngModel)]="criteriaModelList[k].augmentFormulaModel[index][j].mini">
                                           </mat-form-field>
                                           <mat-form-field class="example-full-width">
-                                            <input matInput placeholder="Maximum(Optional)"
+                                            <input type="number" matInput placeholder="Maximum(Optional)"
                                                    [(ngModel)]="criteriaModelList[k].augmentFormulaModel[index][j].maximun">
                                           </mat-form-field>
                                         </div>
@@ -332,57 +339,57 @@
                                       <div *ngIf="criteriaModelList[k].operationType[index][j] == 'status'">
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Point Value"
-                                                 [(ngModel)]="criteriaModelList[k].augmentStatusModel[index][j].pointName">
+                                                 [(ngModel)]="criteriaModelList[k].augmentStatusModel[index][j].setpointName">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="On Value"
-                                                 [(ngModel)]="criteriaModelList[k].augmentStatusModel[index][j].onValue">
+                                          <input type="number" matInput placeholder="On Value"
+                                                 [(ngModel)]="criteriaModelList[k].augmentStatusModel[index][j].setonValue">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Off Value"
-                                                 [(ngModel)]="criteriaModelList[k].augmentStatusModel[index][j].offValue">
+                                          <input type="number" matInput placeholder="Off Value"
+                                                 [(ngModel)]="criteriaModelList[k].augmentStatusModel[index][j].setoffValue">
                                         </mat-form-field>
                                       </div>
 
                                       <div *ngIf="criteriaModelList[k].operationType[index][j] == 'mapper'">
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Map Key"
-                                                 [(ngModel)]="criteriaModelList[k].augmentMapperModel[index][j].mapKey">
+                                                 [(ngModel)]="criteriaModelList[k].augmentMapperModel[index][j].setmap_key">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Dist. Name"
-                                                 [(ngModel)]="criteriaModelList[k].augmentMapperModel[index][j].distName">
+                                                 [(ngModel)]="criteriaModelList[k].augmentMapperModel[index][j].setdist_name">
                                         </mat-form-field>
                                       </div>
 
                                       <div *ngIf="criteriaModelList[k].operationType[index][j] == 'constant'">
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Value"
-                                                 [(ngModel)]="criteriaModelList[k].augmentConstantModel[index][j].value">
+                                          <input type="number" matInput placeholder="Value"
+                                                 [(ngModel)]="criteriaModelList[k].augmentConstantModel[index][j].setvalue">
                                         </mat-form-field>
                                       </div>
 
                                       <div *ngIf="criteriaModelList[k].operationType[index][j] == 'history'">
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Comparision Type"
-                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].comparisonType">
+                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].setcomparisonType">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
                                           <input matInput placeholder="Point Name"
-                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].historyPointName">
+                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].sethistoryPointName">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Previous Time"
-                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].previousTime">
+                                          <input type="number" matInput placeholder="Previous Time"
+                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].setpreviousTime">
                                         </mat-form-field>
 
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Maximum"
-                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].historyMaximum">
+                                          <input type="number" matInput placeholder="Maximum"
+                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].sethistoryMaximum">
                                         </mat-form-field>
                                         <mat-form-field class="example-full-width">
-                                          <input matInput placeholder="Maximum"
-                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].historyMinimum">
+                                          <input type="number" matInput placeholder="Maximum"
+                                                 [(ngModel)]="criteriaModelList[k].augmentHistoryModel[index][j].sethistoryMinimum">
                                         </mat-form-field>
                                       </div>
                                     </div>
@@ -393,13 +400,15 @@
                           </ng-container>
                         </div>
                         <hr *ngIf="addaugment">
-                        <button *ngIf="!criteriaModelList[k].showAugmentSection[index]" id="addAugment" class="float-left"
+                        <button *ngIf="!criteriaModelList[k].showAugmentSection[index]" id="addAugment"
+                                class="float-left"
                                 (click)="addAugmentSexction(k, index)"
                                 style="color: #1BA781; margin-top: 1%; background-color: white; border-color: #1BA781">
                           <i class="material-icons float-left">add</i> Add Augment
                         </button>
 
-                        <button *ngIf="criteriaModelList[k].showAugmentSection[index]" id="removeAugment" class="float-left"
+                        <button *ngIf="criteriaModelList[k].showAugmentSection[index]" id="removeAugment"
+                                class="float-left"
                                 (click)="addAugmentSexction(k, index)"
                                 style="color: maroon; margin-top: 1%; background-color: white; border-color: maroon">
                           <i class="material-icons float-left">remove_circle_outline</i> Remove Augment

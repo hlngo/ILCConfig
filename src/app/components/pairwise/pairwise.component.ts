@@ -35,6 +35,19 @@ export class PairwiseComponent implements OnInit {
   constructor() {
   }
 
+
+  showAugmentSection(i) {
+    this.pairwiseList[i].showAugmentSection[i] = true;
+
+    for (let j = 0; j < this.pairwiseList[i].sliderValue.length; j++) {
+      for (let k = 0; k < this.pairwiseList[i].sliderValue[j].length; k++) {
+        this.pairwiseList[i].augmentSliderValue[j][k] = this.pairwiseList[i].sliderValue[j][k];
+      }
+    }
+
+    // this.pairwiseList[i].augmentSliderValue = this.pairwiseList[i].sliderValue;
+  }
+
   remainingList(i: number, num: number): string[] {
     const criteriaList: string[] = [];
     for (let j = num + 1; j < this.pairwiseCriteriaList[i].length; j++) {
@@ -66,7 +79,6 @@ export class PairwiseComponent implements OnInit {
   }
 
   UpdateCriteriaList(i, index) {
-
     this.pairwiseCriteriaList[i][index] = this.getCriteriaValue;
     this.pairwise.updateCrirteriaList(this.pairwiseCriteriaList);
     this.pairwiseList[i].sliderValue.push([]);
@@ -93,6 +105,42 @@ export class PairwiseComponent implements OnInit {
     this.pairwise.updateCrirteriaList(this.pairwiseCriteriaList);
   }
 
+  updateAugmentSliderValue(changeEvent, i, index, j) {
+    if (this.pairwiseList[j].augmentSliderValue[index] === undefined) {
+      this.pairwiseList[j].augmentSliderValue[index] = [];
+    }
+    if (changeEvent.value > 10) {
+      this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value;
+    } else {
+      if (changeEvent.value === 10) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value - 8;
+      }
+      if (changeEvent.value === 9) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value - 6;
+      }
+      if (changeEvent.value === 8) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value - 4;
+      }
+      if (changeEvent.value === 7) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value - 2;
+      }
+      if (changeEvent.value === 6) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value;
+      }
+      if (changeEvent.value === 5) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value + 2;
+      }
+      if (changeEvent.value === 4) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value + 4;
+      }
+      if (changeEvent.value === 3) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value + 6;
+      }
+      if (changeEvent.value === 2) {
+        this.pairwiseList[j].augmentSliderValue[index][i] = changeEvent.value + 8;
+      }
+    }
+  }
 
   updateSliderValue(changeEvent, i, index, j) {
     if (this.pairwiseList[j].sliderValue[index] === undefined) {
@@ -144,7 +192,9 @@ export class PairwiseComponent implements OnInit {
   updateSliderColor(critera, main, val) {
     console.log(val);
     let slider = document.getElementById(critera + '%' + main);
+    let ring = slider.getElementsByClassName('mat-slider-focus-ring');
 
+    console.log(ring);
     if (val.value > 11) {
       slider.style.color = 'green';
     }
@@ -164,15 +214,16 @@ export class PairwiseComponent implements OnInit {
     this.pairwiseCriteriaList = this.mainModel.paireiseCriteriaList;
     this.clusterList = this.ilc.clusterList;
     this.showPairwiseList = this.clusterList.length !== 0;
-
     for (let i = 0; i < this.clusterList.length; i++) {
       this.pairwiseList[i].updateCrirteriaList(this.pairwiseCriteriaList);
       this.pairwiseList[i].pairwiseName = this.clusterList[i].pairwise_criteria_file;
       this.sliderValue = new Array(this.pairwiseList[i].pairwiseCriteriaList[i].length);
       for (let j = 0; j < this.sliderValue.length; j++) {
         this.pairwiseList[i].sliderValue[j] = [];
+        this.pairwiseList[i].augmentSliderValue[j] = [];
         for (let k = j + 1; k < this.sliderValue.length; k++) {
           this.pairwiseList[i].sliderValue[j][k] = 1;
+          this.pairwiseList[i].augmentSliderValue[j][k] = 1;
         }
       }
     }

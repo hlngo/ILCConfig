@@ -41,16 +41,16 @@ export class CriteriaConfigComponent implements OnInit {
   }[];
 
   devices: {
-    deviceName: string,
-    devicePoints: string[]
-  }[];
+    deviceName: string;
+    devicePoints: string[];
+  }[][];
 
 
   deviceAndPoints: {
     deviceName: string,
     devicePoints: string[],
     checked: boolean
-  }[] = [];
+  }[][] = [];
 
   campus: string;
   building: string;
@@ -71,8 +71,8 @@ export class CriteriaConfigComponent implements OnInit {
 
   status: {
     pointName: string,
-    onValue: string,
-    OffValue: string
+    onValue: number,
+    OffValue: number
   }[] = [];
 
 
@@ -89,9 +89,9 @@ export class CriteriaConfigComponent implements OnInit {
 
 
   history: {
-    comparisonType: string,
-    historyPointName: string,
-    previousTime: string,
+    comparison_type: string,
+    point_name: string,
+    previous_time: number,
     maximum: number,
     minimum: number,
   };
@@ -114,10 +114,10 @@ export class CriteriaConfigComponent implements OnInit {
       console.log('i' + i);
       console.log('val' + val);
       this.criteriaModelList[k].formulaModel[index][i] = new FormulaCriteriaModel();
-      this.criteriaModelList[k].formulaModel[index][i].argument.push('');
+      this.criteriaModelList[k].formulaModel[index][i].getoperation_args.push('');
 
       this.criteriaModelList[k].augmentFormulaModel[index][i] = new FormulaCriteriaModel();
-      this.criteriaModelList[k].augmentFormulaModel[index][i].argument.push('');
+      this.criteriaModelList[k].augmentFormulaModel[index][i].getoperation_args.push('');
 
     } else {
       this.criteriaModelList[k].formulaModel[index][i] = null;
@@ -181,8 +181,7 @@ export class CriteriaConfigComponent implements OnInit {
   addAugmentSexction(k, index) {
     if (!this.criteriaModelList[k].showAugmentSection[index]) {
       this.criteriaModelList[k].showAugmentSection[index] = true;
-      // this.criteriaModelList[k].updateAugmentSection();
-      // this.criteriaModelList[k].augmentFormulaModel = this.criteriaModelList[k].formulaModel;
+      this.criteriaModelList[k].updateaugmentList(index);
       this.criteriaModelList[k].updateAugmentFormula();
     } else {
       this.criteriaModelList[k].showAugmentSection[index] = false;
@@ -197,23 +196,24 @@ export class CriteriaConfigComponent implements OnInit {
 
     if (e.target.checked) {
 
-      this.deviceAndPoints[d].checked = true;
+      this.deviceAndPoints[k][d].checked = true;
 
       const temp: {
         deviceName: string,
         devicePoints: string[],
       } = {
-        deviceName: this.deviceAndPoints[d].deviceName,
-        devicePoints: this.deviceAndPoints[d].devicePoints,
+        deviceName: this.deviceAndPoints[k][d].deviceName,
+        devicePoints: this.deviceAndPoints[k][d].devicePoints,
       };
 
-      if (this.devices === undefined) {
-        this.devices = [];
+      if (this.devices[k] === undefined) {
+        this.devices[k] = [];
       }
-      this.devices.push(temp);
+      this.devices[k].push(temp);
 
+      this.criteriaModelList[k].updateDevceList(this.devices);
       this.ilc.updateILCDevices(this.devices);
-      this.ilc.updateDeviceAndPoints(this.deviceAndPoints);
+      // this.ilc.updateDeviceAndPoints(this.deviceAndPoints[k]);
 
       console.log(this.devices);
 
@@ -226,12 +226,12 @@ export class CriteriaConfigComponent implements OnInit {
       }
       console.log(this.criteriaModelList);
     } else {
-      this.deviceAndPoints[d].checked = false;
+      this.deviceAndPoints[k][d].checked = false;
       let count = 0;
 
-      for (let j = 0; j < this.devices.length; j++) {
-        if (this.devices[j].deviceName === id) {
-          this.devices.splice(j, 1);
+      for (let j = 0; j < this.devices[k].length; j++) {
+        if (this.devices[k][j].deviceName === id) {
+          this.devices[k].splice(j, 1);
           count = j;
           break;
         }
@@ -253,7 +253,7 @@ export class CriteriaConfigComponent implements OnInit {
         break;
       }
       this.ilc.updateILCDevices(this.devices);
-      this.ilc.updateDeviceAndPoints(this.deviceAndPoints);
+      // this.ilc.updateDeviceAndPoints(this.deviceAndPoints);
       console.log(this.criteriaModelList);
     }
   }
@@ -266,10 +266,9 @@ export class CriteriaConfigComponent implements OnInit {
     this.criteriaModelList[k].updateDevceList(this.devices);
     this.ilc.updateILCDevices(this.devices);
     this.criteriaModelList[k].stageName = this.stageName;
-    this.criteriaModelList[k].campus = this.campus;
-    this.criteriaModelList[k].building = this.building;
-
-    this.criteriaModelList[k].setFinalCalulation(this.criteriaList, k);
+    this.criteriaModelList[k].campus =  this.campus;
+    this.criteriaModelList[k].building =  this.building;
+    console.log(this.criteriaModelList[k].setFinalCalulation(this.criteriaList, k));
   }
 
 
@@ -278,13 +277,21 @@ export class CriteriaConfigComponent implements OnInit {
     this.criteriaModelList = this.mainModel.criteriaModelList;
     this.criteriaList = this.mainModel.paireiseCriteriaList;
     this.clusterList = this.ilc.clusterList;
-    this.deviceAndPoints = this.ilc.deviceAndPoint;
+    for (let i = 0; i < this.clusterList.length; i++) {
+      this.deviceAndPoints[i] = this.ilc.deviceAndPoint;
+      // this.devices = this.criteriaModelList[i].devices;
+    }
+    // this.deviceAndPoints = this.ilc.deviceAndPoint;
     this.showCriteriaConfiguartion = this.clusterList.length !== 0;
     this.campus = this.ilc.campus;
     this.building = this.ilc.building;
+    console.log(this.building);
+    console.log(this.campus);
     this.stageName = this.criteria.stageName;
     this.devices = this.ilc.devices;
     for (let i = 0; i < this.criteriaModelList.length; i++) {
+      this.criteriaModelList[i].campus =  this.campus;
+      this.criteriaModelList[i].building =  this.building;
       for (let subCriteria = 0; subCriteria < 3; subCriteria++) {
         if (this.criteriaModelList[i].formulaModel[subCriteria] === undefined) {
           this.criteriaModelList[i].formulaModel[subCriteria] = [];

@@ -1,49 +1,44 @@
 export class StatusCriteriaModel {
 
-  private _pointName: string;
-  private _onValue: number;
-  private _offValue: number;
-  private _status: {
-    pointName: string,
-    onValue: number,
-    offValue: number
-  }[] = [];
+  // tslint:disable-next-line:variable-name
+  private point_name: string;
+  // tslint:disable-next-line:variable-name
+  private on_value: number;
+  // tslint:disable-next-line:variable-name
+  private off_value: number;
+  // tslint:disable-next-line:variable-name
+  private operation_type = ' status';
 
-  print() {
-    console.log(this._offValue)
-    console.log(this._onValue);
-    console.log(this._pointName);
+
+  get getoperation_type(): string {
+    return this.operation_type;
   }
 
-  get status(): { pointName: string; onValue: number; offValue: number }[] {
-    return this._status;
+  set setoperation_type(value: string) {
+    this.operation_type = value;
   }
 
-  set status(value: { pointName: string; onValue: number; offValue: number }[]) {
-    this._status = value;
+  get getpointName(): string {
+    return this.point_name;
   }
 
-  get pointName(): string {
-    return this._pointName;
+  set setpointName(value: string) {
+    this.point_name = value;
   }
 
-  set pointName(value: string) {
-    this._pointName = value;
+  get getonValue(): number {
+    return this.on_value;
   }
 
-  get onValue(): number {
-    return this._onValue;
+  set setonValue(value: number) {
+    this.on_value = value;
   }
 
-  set onValue(value: number) {
-    this._onValue = value;
+  get getoffValue(): number {
+    return this.off_value;
   }
 
-  get offValue(): number {
-    return this._offValue;
-  }
-
-  set offValue(value: number) {
-    this._offValue = value;
+  set setoffValue(value: number) {
+    this.off_value = value;
   }
 }
